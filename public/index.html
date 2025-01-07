@@ -1,27 +1,94 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>My friends</title>
 </head>
+
 <body>
     <img src="./images/kagesite-icon.png" alt="" width="75px">
     <h1>My Friends</h1>
-    <p>1/7/2025</p>
-    <form action="" method="post">
+    <div id="currentDate"></div>
+
+    <!-- ADD FRIEND -->
+    <div id="add-friend">
         <h2>Add New Friends</h2>
-        <input type="text" placeholder="Name">
-        <input type="email" placeholder="email">
-        <input type="text" placeholder="phone">
-        <input type="number" placeholder="age">
-        <input type="submit" value="Add">
-    </form>
-    <form action="" method="post">
+        <input type="text" id="name" placeholder="Name">
+        <input type="email" id="email" placeholder="email">
+        <input type="text" id="phone" placeholder="phone">
+        <input type="number" id="age" placeholder="age">
+        <button id="add-btn">Add</button>
+    </div>
+    
+    <!-- SEARCH BLOCK -->
+    <div>
         <h2>Search</h2>
-        <input type="email" placeholder="email">
-        <input type="submit" value="Search">
-    </form>
-    <h2>Friends</h2>
+        <input type="email" id="search" placeholder="email">
+        <button id="search-btn">Search</button>
+    </div>
+
+    <!-- FRIENDS LIST -->
+    <div>
+        <h2>Friends</h2>
+        <ul id="friends-list"></ul>
+    </div>
+
+
+    <script>
+        fetch('/getCurrentDate')
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('currentDate').innerText = data.currentDate
+            });
+
+        document.getElementById('add-btn').addEventListener('click', () => {
+            const name = document.getElementById("name").value
+            const email = document.getElementById("email").value
+            const phone = document.getElementById("phone").value
+            const age = document.getElementById("age").value
+            fetch('/addFriend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, phone, age })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        alert('Friend added Successfully');
+                        document.getElementById("name").value = '';
+                        document.getElementById("email").value = '';
+                        document.getElementById("phone").value = '';
+                        document.getElementById("age").value = '';
+                        document.getElementById("friends-list").innerHTML = JSON.stringify(data.friends);
+                    } else {
+                        alert('Failed to add friend');
+                    }
+                });
+        })
+
+        document.getElementById('search-btn').addEventListener('click', () => {
+            const searchFriend = document.getElementById('search').value;
+
+            fetch('/findFriend', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, phone, age})
+            })
+                .then(repsonse => response.json())
+                .then(data => {
+                    if (data) {
+
+                    }
+                })
+        })
+
+    </script>
 </body>
+
 </html>
